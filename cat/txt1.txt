@@ -1,0 +1,58 @@
+CC=gcc
+CFLAGS=-std=c11 -Wall -Werror -Wextra
+common=../common/*.c
+TARGET=s21_cat
+CLEAN=@rm -Rf
+cat=*.c
+uname_S := $(shell uname -s)
+ifeq ($(uname_S), Linux)
+	CHECK_LIBS=-lcheck -lm -lpthread -lsubunit -lrt
+	LEAKS=valgrind ./$(TARGET) ../../data-samples/one_line.txt
+else
+	CHECK_LIBS=-lcheck -lm -lpthread
+	LEAKS=CK_FORK=no leaks --atExit -- ./$(TARGET) ../../data-samples/one_line.txt
+endif
+
+OBJ_DIR=obj
+OBJ=$(addprefix $(OBJ_DIR)/, $(patsubst %.c, %.o, $(wildcard *.c)))
+
+.PHONY: all clean
+
+all: $(OBJ_DIR) $(TARGET)
+
+clean:
+	$(CLEAN) $(TARGET)
+	$(CLEAN) $(OBJ_DIR)
+
+$(OBJ_DIR):
+	mkdir $(OBJ_DIR)
+
+$(OBJ_DIR)/%.o: %.c
+ifeq ($(uname_S), Linux)
+	$(CC) $(CFLAGS) -c $< -o $@ -D LINUX
+else
+	$(CC) $(CFLAGS) -c $< -o $@
+endif
+
+$(TARGET):
+	$(CC) $(CFLAGS) $(cat) $(common) -o $@ $^
+
+
+## M-PM-"M-PM-5M-QM-^AM-QM-^BM-QM-^K
+TEST_DIR=../tests
+test:
+	sh ../test_cat.sh
+
+
+## M-PM-^_M-QM-^@M-PM->M-PM-2M-PM-5M-QM-^@M-PM-:M-PM-8
+lint:
+	python3 ../../materials/linters/cpplint.py --extensions=c *.c ../common/*.c
+
+cppcheck:
+	cppcheck --std=c11 --enable=all --suppress=missingIncludeSystem . $(COMMON_DIR)
+
+leaks:
+	$(LEAKS)
+
+verter:
+	sh ../../materials/build/run.sh

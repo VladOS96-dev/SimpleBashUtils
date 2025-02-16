@@ -1,0 +1,28 @@
+file: ex
+root@nm3:/ # grep ".*" test.txt
+one two three
+seven eight one eight three
+thirteen fourteen fifteen
+
+ sixteen seventeen eighteen seven
+sixteen seventeen eighteen
+        twenty seven
+one 504 one
+one 503 one
+one     504     one
+one     504 one
+#comment UP
+twentyseven
+        (#comment down)(#)
+Twenty1
+Twenty3
+twenty5
+Twenty7
+(())
+(123) 456-7891
+
+
+123 456-7890
+
+asd@mail.ru
+asd@
